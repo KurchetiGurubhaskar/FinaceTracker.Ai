@@ -163,7 +163,7 @@ export function Dashboard() {
   }
 
   // Helper for formatting currency
-  const formatINR = (val: number) => '₹' + val.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+  const formatINR = (val) => '₹' + val.toLocaleString('en-IN', { maximumFractionDigits: 0 });
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-6 lg:p-8 font-sans pb-24">
@@ -316,7 +316,7 @@ export function Dashboard() {
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                   <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94a3b8' }} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94a3b8' }} />
-                  <Tooltip contentStyle={{ fontSize: '12px', borderRadius: '4px' }} formatter={(val: number) => formatINR(val)} />
+                  <Tooltip contentStyle={{ fontSize: '12px', borderRadius: '4px' }} formatter={(val) => formatINR(val)} />
                   <Line type="monotone" dataKey="value" stroke="#8b5cf6" strokeWidth={3} dot={false} activeDot={{ r: 4 }} />
                 </LineChart>
               </ResponsiveContainer>

@@ -143,7 +143,7 @@ export function Investments() {
                     ))}
                   </Pie>
                   <Tooltip 
-                    formatter={(value: number) => `₹${value.toLocaleString(undefined, {maximumFractionDigits: 0})}`}
+                    formatter={(value) => `₹${value.toLocaleString(undefined, {maximumFractionDigits: 0})}`}
                   />
                 </PieChart>
               </ResponsiveContainer>

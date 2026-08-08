@@ -54,7 +54,7 @@ export function Finance() {
         if (amountMatch) setAmount(amountMatch[0]);
         
         const words = transcript.split(' ');
-        const atIndex = words.findIndex((w: string) => w.toLowerCase() === 'at');
+        const atIndex = words.findIndex((w) => w.toLowerCase() === 'at');
         if (atIndex !== -1 && words.length > atIndex + 1) {
           setMerchant(words.slice(atIndex + 1).join(' '));
         } else {

@@ -112,7 +112,7 @@ export function Lms() {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {courses.map(course => {
               const totalVideos = course.videos.length;
-              const completedVideosCount = course.videos.filter((v:any) => progress?.completed_videos.includes(v.id)).length;
+              const completedVideosCount = course.videos.filter((v) => progress?.completed_videos.includes(v.id)).length;
               const isCompleted = totalVideos > 0 && completedVideosCount === totalVideos;
               const courseProgress = totalVideos > 0 ? (completedVideosCount / totalVideos) * 100 : 0;
 
@@ -151,7 +151,7 @@ export function Lms() {
                       </div>
 
                       <div className="border-t border-slate-100 pt-4 space-y-2">
-                        {course.videos.map((video:any) => {
+                        {course.videos.map((video) => {
                           const isVidCompleted = progress?.completed_videos.includes(video.id);
                           return (
                             <button 

@@ -200,7 +200,7 @@ export function AiCenter() {
                       dx={-10}
                     />
                     <Tooltip 
-                      formatter={(value: number) => [`₹${value.toFixed(2)}`, 'Predicted Spend']}
+                      formatter={(value) => [`₹${value.toFixed(2)}`, 'Predicted Spend']}
                       labelFormatter={(label) => new Date(label).toLocaleDateString()}
                     />
                     <Area type="monotone" dataKey="predicted_amount" stroke="#4f46e5" strokeWidth={3} fillOpacity={1} fill="url(#colorValue)" />

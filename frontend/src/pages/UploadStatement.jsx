@@ -82,7 +82,7 @@ export function UploadStatement() {
     setIsUploading(false);
   };
 
-  const removeFile = (indexToRemove: number) => {
+  const removeFile = (indexToRemove) => {
     setFiles(prev => prev.filter((_, i) => i !== indexToRemove));
   };
 

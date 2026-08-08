@@ -31,7 +31,7 @@ export function AuthProvider({ children }) {
     initAuth();
   }, []);
 
-  const login = (access: string, refresh: string) => {
+  const login = (access, refresh) => {
     localStorage.setItem('access', access);
     localStorage.setItem('refresh', refresh);
     setUser({ email: 'user@example.com' });
