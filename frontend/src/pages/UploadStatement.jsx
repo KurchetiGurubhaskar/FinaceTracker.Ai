@@ -31,7 +31,7 @@ export function UploadStatement() {
     return () => clearInterval(intervalId);
   }, []);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles.length > 0) {
       setFiles(prev => [...prev, ...acceptedFiles]);
     }
