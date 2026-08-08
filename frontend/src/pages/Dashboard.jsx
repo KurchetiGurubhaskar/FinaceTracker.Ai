@@ -10,6 +10,7 @@ import {
   PieChart, Pie, Cell, BarChart, Bar, LineChart, Line, Legend
 } from 'recharts';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#6366f1'];
@@ -18,6 +19,7 @@ const SLATE_COLORS = ['#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1'];
 
 
 export function Dashboard() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   
   // Real Data State
@@ -199,13 +201,13 @@ export function Dashboard() {
             <p className="text-slate-500 text-sm font-bold tracking-wide mt-1 uppercase">v3.0 Enterprise Edition</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <button className="flex items-center gap-2 bg-white border border-slate-300 text-slate-700 px-3 py-1.5 rounded text-sm font-bold shadow-sm hover:bg-slate-50 transition-colors">
+            <button onClick={() => navigate('/upload')} className="flex items-center gap-2 bg-white border border-slate-300 text-slate-700 px-3 py-1.5 rounded text-sm font-bold shadow-sm hover:bg-slate-50 transition-colors">
               <UploadCloud size={16} /> Upload Bill
             </button>
-            <button className="flex items-center gap-2 bg-white border border-slate-300 text-slate-700 px-3 py-1.5 rounded text-sm font-bold shadow-sm hover:bg-slate-50 transition-colors">
+            <button onClick={() => navigate('/finance')} className="flex items-center gap-2 bg-white border border-slate-300 text-slate-700 px-3 py-1.5 rounded text-sm font-bold shadow-sm hover:bg-slate-50 transition-colors">
               <Mic size={16} /> Voice Entry
             </button>
-            <button className="flex items-center gap-2 bg-primary text-white px-4 py-1.5 rounded text-sm font-bold shadow-sm hover:bg-primary/90 transition-colors">
+            <button onClick={() => navigate('/finance')} className="flex items-center gap-2 bg-primary text-white px-4 py-1.5 rounded text-sm font-bold shadow-sm hover:bg-primary/90 transition-colors">
               <Plus size={16} /> Add Expense
             </button>
           </div>
