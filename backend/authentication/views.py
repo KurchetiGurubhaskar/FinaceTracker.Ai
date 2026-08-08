@@ -59,3 +59,13 @@ class GoogleLoginView(APIView):
             return Response({'error': f'Token verification failed: {str(e)} | client_id was: {client_id}'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': f'Unknown error: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+
+from rest_framework.permissions import IsAuthenticated
+from .serializers import UserDetailSerializer
+
+class UserProfileView(generics.RetrieveUpdateAPIView):
+    serializer_class = UserDetailSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self):
+        return self.request.user

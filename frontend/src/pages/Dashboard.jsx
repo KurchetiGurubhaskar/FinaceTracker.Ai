@@ -15,27 +15,7 @@ import api from '../api/axios';
 const COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#6366f1'];
 const SLATE_COLORS = ['#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1'];
 
-// --- Mock Data for UI completeness ---
-const MOCK_INVESTMENT_DATA = [
-  { month: 'Jan', value: 120000 }, { month: 'Feb', value: 125000 },
-  { month: 'Mar', value: 122000 }, { month: 'Apr', value: 135000 },
-  { month: 'May', value: 142000 }, { month: 'Jun', value: 158000 },
-];
 
-const MOCK_BUDGET_UTILIZATION = [
-  { category: 'Housing', spent: 15000, total: 15000 },
-  { category: 'Food', spent: 8400, total: 10000 },
-  { category: 'Transport', spent: 3200, total: 4000 },
-  { category: 'Utilities', spent: 2100, total: 3000 },
-  { category: 'Entertainment', spent: 4500, total: 3500 },
-];
-
-const MOCK_ACTIVITY_TIMELINE = [
-  { time: '10:42 AM', action: 'Paid Electricity Bill', amount: '-₹1,200', type: 'expense' },
-  { time: 'Yesterday', action: 'Salary Credited', amount: '+₹85,000', type: 'income' },
-  { time: 'Yesterday', action: 'Completed Python Basics Quiz', amount: '+50 XP', type: 'lms' },
-  { time: '2 Days ago', action: 'Invested in NIFTY 50', amount: '-₹5,000', type: 'investment' },
-];
 
 export function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -61,15 +41,20 @@ export function Dashboard() {
   // Graph Data State
   const [cashFlowData, setCashFlowData] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
+  const [budgetData, setBudgetData] = useState([]);
+  const [investmentData, setInvestmentData] = useState([]);
+  const [activityTimeline, setActivityTimeline] = useState([]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const [txnRes, goalsRes, loansRes, subsRes] = await Promise.all([
-          api.get('finance/transactions/').catch(() => ({ data: [] })),
-          api.get('finance/goals/').catch(() => ({ data: [] })),
+        const [txnRes, goalsRes, loansRes, subsRes, budgetsRes, portfoliosRes] = await Promise.all([
+          api.get('transactions/').catch(() => ({ data: [] })),
+          api.get('goals/').catch(() => ({ data: [] })),
           api.get('loans/').catch(() => ({ data: [] })),
-          api.get('subscriptions/').catch(() => ({ data: [] }))
+          api.get('subscriptions/').catch(() => ({ data: [] })),
+          api.get('budgets/').catch(() => ({ data: [] })),
+          api.get('portfolios/').catch(() => ({ data: [] }))
         ]);
 
         const allTxns = txnRes.data;
@@ -136,6 +121,41 @@ export function Dashboard() {
           new Date(a.next_billing_date).getTime() - new Date(b.next_billing_date).getTime()
         ).slice(0, 4);
         setSubscriptions(upcomingSubs);
+
+        // Process Budgets
+        const budgets = budgetsRes.data.map(b => {
+          const catName = b.category ? b.category.name : b.name || 'Uncategorized';
+          const spent = catMap[catName] || 0;
+          return { category: catName, spent: spent, total: parseFloat(b.amount) };
+        });
+        setBudgetData(budgets.length > 0 ? budgets : [
+          { category: 'General', spent: expenses, total: expenses > 0 ? expenses * 1.5 : 1000 }
+        ]);
+
+        // Process Portfolios
+        let totalInvestments = 0;
+        const invData = portfoliosRes.data.map(p => {
+          totalInvestments += parseFloat(p.total_value || 0);
+          return { month: new Date(p.created_at || new Date()).toLocaleString('default', { month: 'short' }), value: parseFloat(p.total_value || 0) };
+        });
+        setInvestmentData(invData.length > 0 ? invData : [{ month: 'Current', value: stats.investments }]);
+        
+        // Update Investments Stat if we got portfolios
+        if (totalInvestments > 0) {
+           setStats(prev => ({...prev, investments: totalInvestments, netWorth: prev.netWorth - prev.investments + totalInvestments}));
+        }
+
+        // Process Activity Timeline
+        const activities = allTxns.slice(0, 5).map(t => {
+          const isCredit = parseFloat(t.credit) > 0;
+          return {
+            time: t.date,
+            action: t.description || t.merchant || 'Transaction',
+            amount: (isCredit ? '+' : '-') + '₹' + (isCredit ? t.credit : t.debit),
+            type: isCredit ? 'income' : 'expense'
+          };
+        });
+        setActivityTimeline(activities);
 
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error);
@@ -290,13 +310,13 @@ export function Dashboard() {
             </div>
             <div className="p-4 flex-1 h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={MOCK_BUDGET_UTILIZATION} layout="vertical" margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                <BarChart data={budgetData} layout="vertical" margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#f1f5f9" />
                   <XAxis type="number" hide />
                   <YAxis dataKey="category" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b' }} width={80} />
                   <Tooltip cursor={{fill: 'transparent'}} contentStyle={{ fontSize: '12px', borderRadius: '4px' }} />
                   <Bar dataKey="spent" fill="#3b82f6" radius={[0, 2, 2, 0]} barSize={12}>
-                    {MOCK_BUDGET_UTILIZATION.map((entry, index) => (
+                    {budgetData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.spent > entry.total * 0.9 ? '#ef4444' : '#3b82f6'} />
                     ))}
                   </Bar>
@@ -312,7 +332,7 @@ export function Dashboard() {
             </div>
             <div className="p-4 flex-1 h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={MOCK_INVESTMENT_DATA} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
+                <LineChart data={investmentData} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                   <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94a3b8' }} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94a3b8' }} />
@@ -409,7 +429,7 @@ export function Dashboard() {
             </div>
             <div className="p-4 flex-1 overflow-y-auto">
               <div className="relative border-l-2 border-slate-100 ml-2 space-y-6">
-                {MOCK_ACTIVITY_TIMELINE.map((item, idx) => (
+                {activityTimeline.map((item, idx) => (
                   <div key={idx} className="relative pl-4">
                     <div className={`absolute -left-[5px] top-1 w-2 h-2 rounded-full ring-2 ring-white ${
                       item.type === 'expense' ? 'bg-rose-500' :

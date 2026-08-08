@@ -1,13 +1,58 @@
-import React, { useState } from 'react';
-import { User, Shield, Bell, CreditCard, Save } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { User, Shield, Bell, CreditCard, Save, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import api from '../api/axios';
 
 export function Settings() {
   const [activeTab, setActiveTab] = useState('profile');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  
+  const [profile, setProfile] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    profile: {
+      notify_weekly_summary: true,
+      notify_unusual_activity: true,
+      notify_marketing: false
+    }
+  });
 
-  const handleSave = () => {
-    toast.success('Settings saved successfully!');
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const res = await api.get('auth/profile/');
+      setProfile(res.data);
+    } catch (err) {
+      toast.error('Failed to load profile.');
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await api.put('auth/profile/', profile);
+      toast.success('Settings saved successfully!');
+    } catch (err) {
+      toast.error('Failed to save settings.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 p-4 mt-6">
@@ -54,20 +99,20 @@ export function Settings() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-slate-700">First Name</label>
-                  <input type="text" defaultValue="Bhaskar" className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" />
+                  <input type="text" value={profile.first_name} onChange={e => setProfile({...profile, first_name: e.target.value})} className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-slate-700">Last Name</label>
-                  <input type="text" defaultValue="" className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" />
+                  <input type="text" value={profile.last_name} onChange={e => setProfile({...profile, last_name: e.target.value})} className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" />
                 </div>
                 <div className="space-y-2 md:col-span-2">
                   <label className="text-sm font-medium text-slate-700">Email Address</label>
-                  <input type="email" defaultValue="bhaskar@example.com" className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" />
+                  <input type="email" value={profile.email} onChange={e => setProfile({...profile, email: e.target.value})} className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" />
                 </div>
               </div>
               <div className="pt-4 flex justify-end">
-                <button onClick={handleSave} className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">
-                  <Save className="w-4 h-4" /> Save Changes
+                <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium disabled:opacity-50">
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save Changes
                 </button>
               </div>
             </div>
@@ -115,26 +160,26 @@ export function Settings() {
                     <h4 className="font-medium text-slate-900">Weekly Summary</h4>
                     <p className="text-sm text-slate-500 mt-1">Receive a weekly email summary of your spending.</p>
                   </div>
-                  <input type="checkbox" defaultChecked className="w-5 h-5 accent-indigo-600 rounded cursor-pointer" />
+                  <input type="checkbox" checked={profile.profile.notify_weekly_summary} onChange={e => setProfile({...profile, profile: {...profile.profile, notify_weekly_summary: e.target.checked}})} className="w-5 h-5 accent-indigo-600 rounded cursor-pointer" />
                 </label>
                 <label className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100 cursor-pointer">
                   <div>
                     <h4 className="font-medium text-slate-900">Unusual Activity Alerts</h4>
                     <p className="text-sm text-slate-500 mt-1">Get notified when AI detects anomaly spending.</p>
                   </div>
-                  <input type="checkbox" defaultChecked className="w-5 h-5 accent-indigo-600 rounded cursor-pointer" />
+                  <input type="checkbox" checked={profile.profile.notify_unusual_activity} onChange={e => setProfile({...profile, profile: {...profile.profile, notify_unusual_activity: e.target.checked}})} className="w-5 h-5 accent-indigo-600 rounded cursor-pointer" />
                 </label>
                 <label className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100 cursor-pointer">
                   <div>
                     <h4 className="font-medium text-slate-900">Marketing Updates</h4>
                     <p className="text-sm text-slate-500 mt-1">Receive emails about new features and offers.</p>
                   </div>
-                  <input type="checkbox" className="w-5 h-5 accent-indigo-600 rounded cursor-pointer" />
+                  <input type="checkbox" checked={profile.profile.notify_marketing} onChange={e => setProfile({...profile, profile: {...profile.profile, notify_marketing: e.target.checked}})} className="w-5 h-5 accent-indigo-600 rounded cursor-pointer" />
                 </label>
               </div>
               <div className="pt-4 flex justify-end">
-                <button onClick={handleSave} className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">
-                  <Save className="w-4 h-4" /> Save Preferences
+                <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium disabled:opacity-50">
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save Preferences
                 </button>
               </div>
             </div>

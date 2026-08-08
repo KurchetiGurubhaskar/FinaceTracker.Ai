@@ -25,7 +25,7 @@ export function Finance() {
 
   const fetchTransactions = async () => {
     try {
-      const res = await api.get('finance/transactions/');
+      const res = await api.get('transactions/');
       setTransactions(res.data);
     } catch (error) {
       console.error('Failed to fetch transactions:', error);
@@ -113,7 +113,7 @@ export function Finance() {
 
   const submitData = async (formData) => {
     try {
-      await api.post('finance/transactions/', formData, {
+      await api.post('transactions/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
