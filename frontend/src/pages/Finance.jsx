@@ -16,8 +16,7 @@ export function Finance() {
   const [paymentMethod, setPaymentMethod] = useState('CARD');
   const [file, setFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     fetchTransactions();
