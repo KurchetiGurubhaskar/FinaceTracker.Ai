@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UploadCloud, FileText, FileSpreadsheet, Key, Loader2, CheckCircle2, XCircle, Clock } from 'lucide-react';
-import axios from 'axios';
+import api from '../api/axios';
 import toast from 'react-hot-toast';
 
 export function UploadStatement() {
@@ -13,10 +13,7 @@ export function UploadStatement() {
 
   const fetchHistory = async () => {
     try {
-      const token = localStorage.getItem('access');
-      const res = await axios.get('http://127.0.0.1:8000/api/statement/history/', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const res = await api.get('statement/history/');
       setHistory(res.data);
     } catch (err) {
       console.error('Failed to fetch upload history', err);
@@ -64,10 +61,9 @@ export function UploadStatement() {
       }
 
       try {
-        await axios.post('http://127.0.0.1:8000/api/statement/upload/', formData, {
+        await api.post('statement/upload/', formData, {
           headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${token}`
+            'Content-Type': 'multipart/form-data'
           }
         });
         successCount++;

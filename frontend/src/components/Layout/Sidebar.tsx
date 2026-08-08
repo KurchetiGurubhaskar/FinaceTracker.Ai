@@ -10,7 +10,10 @@ import {
   FileText,
   CalendarDays,
   Settings,
-  LogOut
+  LogOut,
+  Target,
+  TrendingUp,
+  CreditCard
 } from 'lucide-react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -19,6 +22,9 @@ const navItems = [
   { icon: LayoutDashboard, label: 'Overview', path: '/' },
   { icon: Landmark, label: 'Bank Connect', path: '/bank-connect' },
   { icon: Wallet, label: 'Finance Ledger', path: '/finance' },
+  { icon: Target, label: 'Budgets', path: '/budget' },
+  { icon: TrendingUp, label: 'Investments', path: '/investments' },
+  { icon: CreditCard, label: 'Loans', path: '/loans' },
   { icon: PieChart, label: 'Analytics', path: '/analytics' },
   { icon: Sparkles, label: 'AI Center', path: '/ai' },
   { icon: BookOpen, label: 'Learning (LMS)', path: '/lms' },
@@ -67,10 +73,26 @@ export function Sidebar() {
       </nav>
 
       <div className="p-4 border-t border-slate-200 space-y-1">
-        <button className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full transition-colors group">
-          <Settings className="w-5 h-5 text-slate-400 group-hover:text-slate-600" />
-          Settings
-        </button>
+        <NavLink 
+          to="/settings"
+          className={({ isActive }) =>
+            twMerge(
+              clsx(
+                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors group w-full',
+                isActive 
+                  ? 'bg-indigo-50 text-indigo-600' 
+                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              )
+            )
+          }
+        >
+          {({ isActive }) => (
+            <>
+              <Settings className={clsx('w-5 h-5 transition-colors', isActive ? 'text-indigo-600' : 'text-slate-400 group-hover:text-slate-600')} />
+              Settings
+            </>
+          )}
+        </NavLink>
         <button 
           onClick={() => {
             localStorage.removeItem('access');

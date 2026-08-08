@@ -32,6 +32,9 @@ class Transaction(models.Model):
     merchant = models.CharField(max_length=255, blank=True, null=True)
     receipt = models.FileField(upload_to='receipts/', blank=True, null=True)
     tags = models.JSONField(default=list, blank=True)
+    payment_method = models.CharField(max_length=50, blank=True, null=True)
+    location_lat = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    location_lng = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -45,6 +48,7 @@ class Budget(models.Model):
         ('ANNUAL', 'Annual'),
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='budgets')
+    name = models.CharField(max_length=255, blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='budgets')
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     period = models.CharField(max_length=10, choices=PERIOD_CHOICES, default='MONTHLY')

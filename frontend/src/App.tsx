@@ -8,18 +8,29 @@ import { Login } from './pages/auth/Login';
 import { Register } from './pages/auth/Register';
 import { ForgotPassword } from './pages/auth/ForgotPassword';
 import { Finance } from './pages/Finance';
+import { Budget } from './pages/Budget';
+import { Investments } from './pages/Investments';
 import { BankConnect } from './pages/BankConnect';
 import { Analytics } from './pages/Analytics';
 import { AiCenter } from './pages/AiCenter';
 import { Lms } from './pages/Lms';
+import { Loans } from './pages/Loans';
 import { Reports } from './pages/Reports';
 import { Calendar } from './pages/Calendar';
+import { Settings } from './pages/Settings';
 import { Toaster } from 'react-hot-toast';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { ParticlesBackground } from './components/UI/ParticlesBackground';
+import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Simple PrivateRoute wrapper for auth checking
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-500 font-bold uppercase tracking-widest">Loading...</div>;
+  }
+  
   const token = localStorage.getItem('access');
   if (!token) {
     return <Navigate to="/login" replace />;
@@ -33,48 +44,53 @@ function App() {
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
-      <ParticlesBackground />
-      <BrowserRouter>
-        <Toaster 
-          position="top-right"
-          toastOptions={{
-            style: {
-              background: '#FFFFFF',
-              color: '#0F172A',
-              border: '1px solid #E2E8F0',
-              boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
-            },
-            success: {
-              iconTheme: { primary: '#22C55E', secondary: '#FFFFFF' },
-            },
-            error: {
-              iconTheme: { primary: '#EF4444', secondary: '#FFFFFF' },
-            },
-          }} 
-        />
-        <Routes>
-        {/* Auth Routes */}
-        <Route element={<AuthLayout />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-        </Route>
+      <AuthProvider>
+        <ParticlesBackground />
+        <BrowserRouter>
+          <Toaster 
+            position="top-right"
+            toastOptions={{
+              style: {
+                background: '#FFFFFF',
+                color: '#0F172A',
+                border: '1px solid #E2E8F0',
+                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+              },
+              success: {
+                iconTheme: { primary: '#22C55E', secondary: '#FFFFFF' },
+              },
+              error: {
+                iconTheme: { primary: '#EF4444', secondary: '#FFFFFF' },
+              },
+            }} 
+          />
+          <Routes>
+          {/* Auth Routes */}
+          <Route element={<AuthLayout />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+          </Route>
 
-        {/* Protected App Routes */}
-        <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
-          <Route index element={<Dashboard />} />
-          <Route path="upload" element={<UploadStatement />} />
-          {/* We will add other routes here later as we build them */}
-          <Route path="finance" element={<Finance />} />
-          <Route path="bank-connect" element={<BankConnect />} />
-          <Route path="analytics" element={<Analytics />} />
-          <Route path="ai" element={<AiCenter />} />
-          <Route path="lms" element={<Lms />} />
-          <Route path="reports" element={<Reports />} />
-          <Route path="calendar" element={<Calendar />} />
-        </Route>
-        </Routes>
-      </BrowserRouter>
+          {/* Protected App Routes */}
+          <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
+            <Route index element={<Dashboard />} />
+            <Route path="upload" element={<UploadStatement />} />
+            <Route path="finance" element={<Finance />} />
+            <Route path="budget" element={<Budget />} />
+            <Route path="investments" element={<Investments />} />
+            <Route path="bank-connect" element={<BankConnect />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="ai" element={<AiCenter />} />
+            <Route path="lms" element={<Lms />} />
+            <Route path="loans" element={<Loans />} />
+            <Route path="reports" element={<Reports />} />
+            <Route path="calendar" element={<Calendar />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </GoogleOAuthProvider>
   );
 }
