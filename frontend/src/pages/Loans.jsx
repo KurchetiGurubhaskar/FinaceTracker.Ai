@@ -3,7 +3,7 @@ import { Landmark, AlertCircle } from 'lucide-react';
 import api from '../api/axios';
 
 export function Loans() {
-  const [loans, setLoans] = useState<any[]>([]);
+  const [loans, setLoans] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

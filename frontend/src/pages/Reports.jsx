@@ -3,7 +3,7 @@ import { FileText, Download, Clock } from 'lucide-react';
 import api from '../api/axios';
 
 export function Reports() {
-  const [reports, setReports] = useState<any[]>([]);
+  const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

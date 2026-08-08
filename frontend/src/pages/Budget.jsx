@@ -3,7 +3,7 @@ import { Target, TrendingUp, AlertCircle, Plus, Loader2 } from 'lucide-react';
 import api from '../api/axios';
 
 export function Budget() {
-  const [budgets, setBudgets] = useState<any[]>([]);
+  const [budgets, setBudgets] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

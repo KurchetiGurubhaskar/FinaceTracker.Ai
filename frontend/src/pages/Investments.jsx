@@ -4,8 +4,8 @@ import api from '../api/axios';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 export function Investments() {
-  const [portfolios, setPortfolios] = useState<any[]>([]);
-  const [assets, setAssets] = useState<any[]>([]);
+  const [portfolios, setPortfolios] = useState([]);
+  const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

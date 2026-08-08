@@ -3,7 +3,7 @@ import { Calendar as CalendarIcon, Clock, Bell } from 'lucide-react';
 import api from '../api/axios';
 
 export function Calendar() {
-  const [subscriptions, setSubscriptions] = useState<any[]>([]);
+  const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

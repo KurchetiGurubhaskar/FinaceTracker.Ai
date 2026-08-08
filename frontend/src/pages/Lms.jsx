@@ -3,10 +3,10 @@ import { BookOpen, PlayCircle, CheckCircle2, Award, Shield, Loader2, Star } from
 import api from '../api/axios';
 
 export function Lms() {
-  const [courses, setCourses] = useState<any[]>([]);
-  const [progress, setProgress] = useState<any>(null);
+  const [courses, setCourses] = useState([]);
+  const [progress, setProgress] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeVideo, setActiveVideo] = useState<any>(null);
+  const [activeVideo, setActiveVideo] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -34,7 +34,7 @@ export function Lms() {
     }
   };
 
-  const markVideoComplete = async (video: any) => {
+  const markVideoComplete = async (video) => {
     if (!progress || progress.completed_videos.includes(video.id)) return;
     
     try {

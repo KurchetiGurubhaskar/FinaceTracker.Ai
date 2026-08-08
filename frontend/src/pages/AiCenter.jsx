@@ -4,7 +4,7 @@ import api from '../api/axios';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export function AiCenter() {
-  const [activeTab, setActiveTab] = useState<'chat' | 'predictions' | 'anomalies'>('chat');
+  const [activeTab, setActiveTab] = useState('chat');
   
   // Chat State
   const [messages, setMessages] = useState([
@@ -14,11 +14,11 @@ export function AiCenter() {
   const [isChatLoading, setIsChatLoading] = useState(false);
 
   // Predictions State
-  const [predictions, setPredictions] = useState<any[]>([]);
+  const [predictions, setPredictions] = useState([]);
   const [isPredLoading, setIsPredLoading] = useState(false);
 
   // Anomalies State
-  const [anomalies, setAnomalies] = useState<any[]>([]);
+  const [anomalies, setAnomalies] = useState([]);
   const [isAnomLoading, setIsAnomLoading] = useState(false);
 
   useEffect(() => {

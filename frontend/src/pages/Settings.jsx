@@ -3,7 +3,7 @@ import { User, Shield, Bell, CreditCard, Save } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export function Settings() {
-  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications' | 'billing'>('profile');
+  const [activeTab, setActiveTab] = useState('profile');
 
   const handleSave = () => {
     toast.success('Settings saved successfully!');

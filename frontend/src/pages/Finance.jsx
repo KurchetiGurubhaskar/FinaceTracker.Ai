@@ -3,7 +3,7 @@ import { IndianRupee, Search, Filter, Plus, Mic, UploadCloud, MapPin, CreditCard
 import api from '../api/axios';
 
 export function Finance() {
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [isAdding, setIsAdding] = useState(false);
@@ -14,7 +14,7 @@ export function Finance() {
   const [merchant, setMerchant] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [paymentMethod, setPaymentMethod] = useState('CARD');
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -47,7 +47,7 @@ export function Finance() {
         setIsListening(true);
       };
       
-      recognition.onresult = (event: any) => {
+      recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
         // Simple NLP mock: "Spent 500 at Starbucks"
         const amountMatch = transcript.match(/\d+/);
@@ -84,7 +84,7 @@ export function Finance() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     

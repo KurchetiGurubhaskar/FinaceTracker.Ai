@@ -1,25 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../api/axios';
 
-interface User {
-  id?: number;
-  email: string;
-  first_name?: string;
-  last_name?: string;
-  profile_picture?: string;
-}
 
-interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-  login: (access: string, refresh: string) => void;
-  logout: () => void;
-}
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+
+const AuthContext = createContext();
+
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

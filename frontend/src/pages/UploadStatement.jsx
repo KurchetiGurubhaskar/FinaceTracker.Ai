@@ -6,10 +6,10 @@ import api from '../api/axios';
 import toast from 'react-hot-toast';
 
 export function UploadStatement() {
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState([]);
   const [password, setPassword] = useState('');
   const [isUploading, setIsUploading] = useState(false);
-  const [history, setHistory] = useState<any[]>([]);
+  const [history, setHistory] = useState([]);
 
   const fetchHistory = async () => {
     try {
@@ -67,7 +67,7 @@ export function UploadStatement() {
           }
         });
         successCount++;
-      } catch (err: any) {
+      } catch (err) {
         toast.error(`Failed to upload ${file.name}: ` + (err.response?.data?.error || 'Unknown error'));
       }
     }
@@ -221,7 +221,7 @@ export function UploadStatement() {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/50">
-              {history.length > 0 ? history.map((item: any) => (
+              {history.length > 0 ? history.map((item) => (
                 <tr key={item.id} className="hover:bg-white/50 transition-colors">
                   <td className="px-6 py-4 font-bold text-slate-900">{item.file_name}</td>
                   <td className="px-6 py-4 uppercase font-medium">{item.file_type}</td>

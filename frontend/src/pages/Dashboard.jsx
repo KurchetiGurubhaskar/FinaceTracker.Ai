@@ -41,10 +41,10 @@ export function Dashboard() {
   const [loading, setLoading] = useState(true);
   
   // Real Data State
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [goals, setGoals] = useState<any[]>([]);
-  const [loans, setLoans] = useState<any[]>([]);
-  const [subscriptions, setSubscriptions] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState([]);
+  const [goals, setGoals] = useState([]);
+  const [loans, setLoans] = useState([]);
+  const [subscriptions, setSubscriptions] = useState([]);
   
   // Computed Stats State
   const [stats, setStats] = useState({
@@ -59,8 +59,8 @@ export function Dashboard() {
   });
 
   // Graph Data State
-  const [cashFlowData, setCashFlowData] = useState<any[]>([]);
-  const [categoryData, setCategoryData] = useState<any[]>([]);
+  const [cashFlowData, setCashFlowData] = useState([]);
+  const [categoryData, setCategoryData] = useState([]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -80,7 +80,7 @@ export function Dashboard() {
         const flowMap: Record<string, { income: number; expenses: number }> = {};
         const catMap: Record<string, number> = {};
 
-        allTxns.forEach((t: any) => {
+        allTxns.forEach((t) => {
           const credit = parseFloat(t.credit);
           const debit = parseFloat(t.debit);
           const date = t.date;
@@ -100,7 +100,7 @@ export function Dashboard() {
 
         // Total Loans
         let totalLoans = 0;
-        loansRes.data.forEach((l: any) => {
+        loansRes.data.forEach((l) => {
           totalLoans += parseFloat(l.outstanding_amount || 0);
         });
 

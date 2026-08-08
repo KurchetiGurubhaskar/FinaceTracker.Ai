@@ -3,7 +3,7 @@ import { Building2, Link2, RefreshCw } from 'lucide-react';
 import api from '../api/axios';
 
 export function BankConnect() {
-  const [connections, setConnections] = useState<any[]>([]);
+  const [connections, setConnections] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -24,7 +24,7 @@ import { ParticlesBackground } from './components/UI/ParticlesBackground';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Simple PrivateRoute wrapper for auth checking
-const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
   
   if (loading) {

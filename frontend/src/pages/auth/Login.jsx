@@ -12,12 +12,12 @@ const loginSchema = z.object({
   password: z.string().min(1, { message: "Password is required" }),
 });
 
-type LoginFormValues = z.infer<typeof loginSchema>;
+
 
 export function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [serverError, setServerError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState(null);
   
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema)
@@ -35,7 +35,7 @@ export function Login() {
         login(response.data.access, response.data.refresh);
         navigate('/');
       }
-    } catch (error: any) {
+    } catch (error) {
       if (error.response && error.response.status === 401) {
         setServerError('Invalid email or password.');
       } else {
