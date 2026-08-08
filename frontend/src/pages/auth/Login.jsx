@@ -23,7 +23,7 @@ export function Login() {
     resolver: zodResolver(loginSchema)
   });
 
-  const onSubmit = async (data: LoginFormValues) => {
+  const onSubmit = async (data) => {
     setServerError(null);
     try {
       const response = await api.post('auth/login/', {

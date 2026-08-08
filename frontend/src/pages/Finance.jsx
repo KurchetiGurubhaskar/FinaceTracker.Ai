@@ -37,7 +37,7 @@ export function Finance() {
   const handleVoiceEntry = () => {
     // Check if browser supports Web Speech API
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognition = new SpeechRecognition();
       
       recognition.continuous = false;
@@ -111,7 +111,7 @@ export function Finance() {
     }
   };
 
-  const submitData = async (formData: FormData) => {
+  const submitData = async (formData) => {
     try {
       await api.post('finance/transactions/', formData, {
         headers: {
