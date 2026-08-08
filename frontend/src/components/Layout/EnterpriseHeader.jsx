@@ -9,7 +9,7 @@ export function EnterpriseHeader() {
   const [aiSearch, setAiSearch] = useState('');
   const navigate = useNavigate();
 
-  const handleGlobalSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleGlobalSearch = (e) => {
     if (e.key === 'Enter' && globalSearch.trim()) {
       // Navigate to dashboard with search query
       navigate(`/?q=${encodeURIComponent(globalSearch.trim())}`);
@@ -17,7 +17,7 @@ export function EnterpriseHeader() {
     }
   };
 
-  const handleAiSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleAiSearch = (e) => {
     if (e.key === 'Enter' && aiSearch.trim()) {
       toast.success(`AI is analyzing "${aiSearch}"... (Coming soon)`);
       setAiSearch('');

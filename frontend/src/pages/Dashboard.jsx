@@ -77,8 +77,8 @@ export function Dashboard() {
 
         let income = 0;
         let expenses = 0;
-        const flowMap: Record<string, { income: number; expenses: number }> = {};
-        const catMap: Record<string, number> = {};
+        const flowMap = {};
+        const catMap = {};
 
         allTxns.forEach((t) => {
           const credit = parseFloat(t.credit);

@@ -77,7 +77,7 @@ export function Finance() {
     }
   };
 
-  const handleFileDrop = (e: React.DragEvent) => {
+  const handleFileDrop = (e) => {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       setFile(e.dataTransfer.files[0]);

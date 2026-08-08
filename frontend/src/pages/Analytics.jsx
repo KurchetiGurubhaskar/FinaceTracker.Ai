@@ -31,7 +31,7 @@ export function Analytics() {
   }
 
   // Calculate expenses by category
-  const categoryData: Record<string, number> = {};
+  const categoryData = {};
   let totalExpenses = 0;
   
   transactions.forEach(t => {

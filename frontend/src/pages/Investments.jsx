@@ -45,7 +45,7 @@ export function Investments() {
   const pnlPercentage = totalInvested > 0 ? (totalPnL / totalInvested) * 100 : 0;
 
   // Prepare chart data (Group by asset type)
-  const allocationMap: Record<string, number> = {};
+  const allocationMap = {};
   assets.forEach(asset => {
     const price = asset.current_price ? parseFloat(asset.current_price) : parseFloat(asset.average_buy_price);
     const value = parseFloat(asset.quantity) * price;
