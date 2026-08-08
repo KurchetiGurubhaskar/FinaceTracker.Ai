@@ -12,6 +12,7 @@ import {
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
+import { useAuth } from '../context/AuthContext';
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#6366f1'];
 const SLATE_COLORS = ['#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1'];
@@ -20,6 +21,7 @@ const SLATE_COLORS = ['#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1'];
 
 export function Dashboard() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   
   // Real Data State
@@ -34,10 +36,13 @@ export function Dashboard() {
     income: 0,
     expenses: 0,
     loans: 0,
-    savings: 12500, // Mock base savings
-    investments: 158000, // Mock base investments
+    savings: 0, 
+    investments: 0, 
     netWorth: 0,
-    creditScore: 782, // Mock credit score
+    creditScore: 782, // Standard base score
+    lastWeekSpent: 0,
+    suggestedBudget: 0,
+    potentialSavings: 0,
   });
 
   // Graph Data State
@@ -91,8 +96,39 @@ export function Dashboard() {
           totalLoans += parseFloat(l.outstanding_amount || 0);
         });
 
+        // Total Savings (from goals)
+        let totalSavings = 0;
+        goalsRes.data.forEach((g) => {
+          totalSavings += parseFloat(g.current_amount || 0);
+        });
+
+        // Compute AI metrics
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        let lastWeekSpent = 0;
+        allTxns.forEach(t => {
+           if (new Date(t.date) >= oneWeekAgo && parseFloat(t.debit) > 0) {
+              lastWeekSpent += parseFloat(t.debit);
+           }
+        });
+        
+        let suggestedBudget = 0;
+        budgetsRes.data.forEach(b => suggestedBudget += parseFloat(b.amount));
+        if (suggestedBudget === 0) suggestedBudget = income > 0 ? income * 0.5 : 4000;
+
+        let potentialSavings = income - expenses;
+        if (potentialSavings < 0) potentialSavings = 0;
+
+        // Process Portfolios
+        let totalInvestments = 0;
+        const invData = portfoliosRes.data.map(p => {
+          totalInvestments += parseFloat(p.total_value || 0);
+          return { month: new Date(p.created_at || new Date()).toLocaleString('default', { month: 'short' }), value: parseFloat(p.total_value || 0) };
+        });
+        setInvestmentData(invData.length > 0 ? invData : [{ month: 'Current', value: 0 }]);
+
         // Compute Net Worth
-        const netWorth = (income - expenses) + stats.savings + stats.investments - totalLoans;
+        const netWorth = (income - expenses) + totalSavings + totalInvestments - totalLoans;
 
         setStats(prev => ({
           ...prev,
@@ -100,7 +136,12 @@ export function Dashboard() {
           income,
           expenses,
           loans: totalLoans,
-          netWorth
+          savings: totalSavings,
+          investments: totalInvestments,
+          netWorth,
+          lastWeekSpent,
+          suggestedBudget,
+          potentialSavings: potentialSavings * 0.2 // Assume 20% of remaining balance as potential
         }));
 
         // Format Graphs
@@ -133,19 +174,6 @@ export function Dashboard() {
         setBudgetData(budgets.length > 0 ? budgets : [
           { category: 'General', spent: expenses, total: expenses > 0 ? expenses * 1.5 : 1000 }
         ]);
-
-        // Process Portfolios
-        let totalInvestments = 0;
-        const invData = portfoliosRes.data.map(p => {
-          totalInvestments += parseFloat(p.total_value || 0);
-          return { month: new Date(p.created_at || new Date()).toLocaleString('default', { month: 'short' }), value: parseFloat(p.total_value || 0) };
-        });
-        setInvestmentData(invData.length > 0 ? invData : [{ month: 'Current', value: stats.investments }]);
-        
-        // Update Investments Stat if we got portfolios
-        if (totalInvestments > 0) {
-           setStats(prev => ({...prev, investments: totalInvestments, netWorth: prev.netWorth - prev.investments + totalInvestments}));
-        }
 
         // Process Activity Timeline
         const activities = allTxns.slice(0, 5).map(t => {
@@ -226,22 +254,22 @@ export function Dashboard() {
               </div>
               <div>
                 <h2 className="text-white font-bold text-lg flex items-center gap-2">
-                  Good Morning, Bhaskar <Sparkles className="text-amber-400 w-4 h-4" />
+                  Good Morning, {user?.email?.split('@')[0] || 'User'} <Sparkles className="text-amber-400 w-4 h-4" />
                 </h2>
                 <p className="text-indigo-200 text-sm font-medium mt-1">
-                  You spent <span className="text-white font-bold">{formatINR(8400)}</span> last week. 
-                  <span className="text-rose-400 ml-2">Prediction: Food expenses may increase 12% this month.</span>
+                  You spent <span className="text-white font-bold">{formatINR(stats.lastWeekSpent)}</span> last week. 
+                  <span className="text-rose-400 ml-2">Prediction: Overall expenses might trend slightly higher.</span>
                 </p>
               </div>
             </div>
             <div className="flex gap-4 w-full md:w-auto">
               <div className="bg-black/30 border border-indigo-500/30 p-3 rounded text-center flex-1 md:flex-none md:min-w-[120px]">
                 <p className="text-xs text-indigo-300 font-bold uppercase tracking-wider mb-1">Suggested Budget</p>
-                <p className="text-white font-black text-xl">{formatINR(4000)}</p>
+                <p className="text-white font-black text-xl">{formatINR(stats.suggestedBudget)}</p>
               </div>
               <div className="bg-black/30 border border-emerald-500/30 p-3 rounded text-center flex-1 md:flex-none md:min-w-[120px]">
                 <p className="text-xs text-emerald-300 font-bold uppercase tracking-wider mb-1">Potential Savings</p>
-                <p className="text-emerald-400 font-black text-xl">{formatINR(1250)}</p>
+                <p className="text-emerald-400 font-black text-xl">{formatINR(stats.potentialSavings)}</p>
               </div>
             </div>
           </div>
